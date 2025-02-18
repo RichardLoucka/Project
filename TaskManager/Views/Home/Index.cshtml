@@ -1,5 +1,4 @@
-﻿
-<h1>Tasks</h1>
+﻿<h1>Tasks</h1>
 
 <button type="button" class="btn btn-primary">Add Task</button>
 <button type="button" class="btn btn-primary">Modify Task</button>
@@ -15,6 +14,13 @@
     </tr>
     </thead>
     <tbody>
-    
+    @foreach (var task in Model)
+    {
+        <tr>
+            <td>@task.Priority</td>
+            <td>@task.Title</td>
+            <td>@task.Description</td>
+        </tr>
+    }
     </tbody>
 </table>
