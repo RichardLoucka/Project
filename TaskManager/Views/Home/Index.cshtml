@@ -1,16 +1,12 @@
 ﻿<h1>Tasks</h1>
 
-<button type="button" class="btn btn-primary">Add Task</button>
-<button type="button" class="btn btn-primary">Modify Task</button>
-<button type="button" class="btn btn-primary">Remove Task</button>
-<button type="button" class="btn btn-primary">Export Task</button>
-
-<table class="table table-striped">
+<table class="table table-striped w-75">
     <thead>
     <tr>
         <th>Priority</th>
         <th>Title</th>
         <th>Description</th>
+        <th>Select</th>
     </tr>
     </thead>
     <tbody>
@@ -20,7 +16,32 @@
             <td>@task.Priority</td>
             <td>@task.Title</td>
             <td>@task.Description</td>
+            <td><input type="checkbox" name="taskCheckbox" value="@task.Id"/></td>
         </tr>
     }
     </tbody>
 </table>
+
+<div class="button-container d-flex justify-content-between mt-3">
+    <button type="button" class="btn btn-primary">Add Task</button>
+    <button type="button" class="btn btn-primary">Modify Task</button>
+    <button type="button" class="btn btn-primary">Remove Task</button>
+    <button type="button" class="btn btn-primary">Export Task</button>
+</div>
+
+<style>
+    .button-container{
+        display: flex;
+        justify-content: space-between;
+        width: 75%;
+        margin-top: 20px;
+    }
+    
+    .button-container button{
+        width: 23%;
+    }
+    
+    .table th, .table td{
+        text-align: center;
+    }
+</style>
