@@ -1,4 +1,8 @@
 using System.Diagnostics;
+using System.Text;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Models;
@@ -35,6 +39,13 @@ public class HomeController : Controller
     {
         if (file != null)
         {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            
             task.FileName = file.FileName;
         }
         
@@ -63,5 +74,34 @@ public class HomeController : Controller
         }
 
         return RedirectToAction(nameof(Index));  
+    }
+
+    public async Task<IActionResult> Download(string fileName)
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","uploads", fileName);
+
+        if (System.IO.File.Exists(filePath))
+        {
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+        return NotFound();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ExportToJson()
+    {
+        var tasks = await _context.Tasks.ToListAsync();
+        var taskExportList = tasks.Select(t => new TaskToExport
+        {
+            Title = t.Title,
+            Priority = t.Priority,
+            Description = t.Description
+        }).ToList();
+        
+        var json = JsonConvert.SerializeObject(taskExportList, Newtonsoft.Json.Formatting.Indented);
+        var fileName = "tasks.json";
+        var fileBytes = System.Text.Encoding.UTF8.GetBytes(json);
+        return File(fileBytes, "application/json", fileName);
     }
 }
