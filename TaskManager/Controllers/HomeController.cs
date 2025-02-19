@@ -15,10 +15,13 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string sortOrder)
     {
-        var tasks = await _context.Tasks.ToListAsync();
-        return View(tasks);
+        ViewData["SortOrder"] = sortOrder == "asc" ? "desc" : "asc";
+        var tasks = _context.Tasks.AsQueryable();
+
+        tasks = sortOrder == "asc" ? tasks.OrderBy(t => t.Priority) : tasks.OrderByDescending(t => t.Priority);
+        return View(await tasks.ToListAsync());
     }
 
     public IActionResult Create()
