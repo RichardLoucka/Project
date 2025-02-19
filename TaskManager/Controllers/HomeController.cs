@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Models;
+using Task = TaskManager.Models.Task;
 
 namespace TaskManager.Controllers;
 
@@ -20,14 +21,44 @@ public class HomeController : Controller
         return View(tasks);
     }
 
-    public IActionResult Privacy()
+    public IActionResult Create()
     {
         return View();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Task task, IFormFile file)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        if (file != null)
+        {
+            task.FileName = file.FileName;
+        }
+        
+        if (string.IsNullOrEmpty(task.FileName))
+        {
+            task.FileName = "";  
+        }
+        _context.Add(task);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Remove(int[] selectedTasks)
+    {
+        if (selectedTasks != null && selectedTasks.Any())
+        {
+            var tasksToRemove = _context.Tasks.Where(t => selectedTasks.Contains(t.Id)).ToList();
+
+            if (tasksToRemove.Any())
+            {
+                _context.Tasks.RemoveRange(tasksToRemove);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        return RedirectToAction(nameof(Index));  
     }
 }

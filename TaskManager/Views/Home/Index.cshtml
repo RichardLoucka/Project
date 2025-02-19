@@ -1,35 +1,36 @@
 ﻿<h1>Tasks</h1>
 
-<table class="table table-striped w-75">
-    <thead>
-    <tr>
-        <th>Priority</th>
-        <th>Title</th>
-        <th>Description</th>
-        <th>File</th>
-        <th>Select</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var task in Model)
-    {
+<form asp-action="Remove" method="post">
+    <table class="table table-striped w-75">
+        <thead>
         <tr>
-            <td>@task.Priority</td>
-            <td>@task.Title</td>
-            <td>@task.Description</td>
-            <td>@task.FileName</td>
-            <td><input type="checkbox" name="taskCheckbox" value="@task.Id"/></td>
+            <th>Priority</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>File</th>
+            <th>Select</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var task in Model)
+        {
+            <tr>
+                <td>@task.Priority</td>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
+                <td>@task.FileName</td>
+                <td><input type="checkbox" name="selectedTasks" value="@task.Id"/></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <div class="button-container d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='@Url.Action("Create", "Home")'">Add Task</button>
+        <button type="submit" class="btn btn-danger">Remove Task</button>
+        <button type="button" class="btn btn-primary">Export Task</button>
+    </div>
+</form>
 
-<div class="button-container d-flex justify-content-between mt-3">
-    <button type="button" class="btn btn-primary">Add Task</button>
-    <button type="button" class="btn btn-primary">Modify Task</button>
-    <button type="button" class="btn btn-primary">Remove Task</button>
-    <button type="button" class="btn btn-primary">Export Task</button>
-</div>
 
 <style>
     .button-container{
@@ -47,3 +48,5 @@
         text-align: center;
     }
 </style>
+
+
